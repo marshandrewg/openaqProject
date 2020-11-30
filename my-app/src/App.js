@@ -1,5 +1,6 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
+import { useForm } from "react-hook-form";
 import logo from './logo.svg';
 import './App.css';
 
@@ -13,31 +14,51 @@ function App() {
    */
   useEffect(() => {
     const fetchData = async () => {
-      const result = await axios('https://api.openaq.org/v1/cities');
+      const result = await axios('https://api.openaq.org/v1/cities?country=US');
       setData(result.data.results);
-      console.log(data);
+      // setCitySelected(result.data.results[0].name)
+      console.log(citySelected);
+      console.log("first city" + result.data.results[0].name);
     };
 
     fetchData();
   }, []);
   
+  const [citySelected, setCitySelected] = useState("");
+  useEffect(() => {
+    const fetchCitySelected = async () => {
+      console.log("city chosen" + citySelected);
+      if(citySelected != ""){
+        const result = await axios('https://api.openaq.org/v1/measurements?country=US&city=' + citySelected);
+        console.log(result.data.results);
+      }
+      
+    };
+
+    fetchCitySelected();
+  }, [citySelected]);
+
+
 
 
   return (
+    
     <div className="App">
       <header className="App-header">
+      <label form="cities">Choose a city: </label>
+        <select name="cities" id="cities" value={citySelected} onChange={event => setCitySelected(event.target.value)}>
+          {data.map(city => (
+            <option value={city.name}>{city.name}</option>
+          ))}
+        </select>
         <p>
-          Measurementss:
-          <label for="cities">Choose a city:</label> */
-            <select name="cities" id="cities">
-              {data.map(city => (
-                <option value={city.count}>{city.name}</option>
-              ))}
-              {console.log(data)}
-            </select>
+          
         </p>
         <p>
           Edit?:
+        </p>
+        <p>
+          Measurements:
         </p>
         <img src={logo} className="App-logo" alt="logo" />
         <p>
