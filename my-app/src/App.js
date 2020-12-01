@@ -25,12 +25,14 @@ function App() {
   }, []);
   
   const [citySelected, setCitySelected] = useState("");
+  const [measurements, setMeasurements] = useState("");
   useEffect(() => {
     const fetchCitySelected = async () => {
       console.log("city chosen" + citySelected);
       if(citySelected != ""){
         const result = await axios('https://api.openaq.org/v1/measurements?country=US&city=' + citySelected);
         console.log(result.data.results);
+        setMeasurements(result.data.results[0]);
       }
       
     };
@@ -57,9 +59,9 @@ function App() {
         <p>
           Edit?:
         </p>
-        <p>
-          Measurements:
-        </p>
+        <label form="measurements">Measurements Below</label>
+            {Object.entries(measurements).map(([key, value]) => 
+            <p> {JSON.stringify(key)} + " " + {JSON.stringify(value)})</p>)}
         <img src={logo} className="App-logo" alt="logo" />
         <p>
           Edit <code>src/App.js</code> and save to reload.
