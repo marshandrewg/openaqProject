@@ -1,8 +1,8 @@
 import flask
 from flask import request, jsonify
-
+from flask_cors import CORS
 app = flask.Flask(__name__)
-
+cors = CORS(app)
 measurements = [
     {
         "city": "El Paso",
@@ -17,10 +17,11 @@ measurements = [
     }
 ]
 
-@app.route('/api/v1/measurements', method=['POST'])
+@app.route('/api/v1/measurements', methods=['POST'])
 def add_measurement():
+    print("request is" + str(request.json), flush=True)
     if not request.json or not 'city' in request.json:
-        abort(400)
+        flask.abort(400)  
     measurement = {
         "city": request.json['city'],
         "coordinates": request.json['coordinates'],
@@ -31,5 +32,18 @@ def add_measurement():
         "unit": request.json['unit'],
         "value": request.json['value']
     }
+    print("Created measurement", flush=True);
     measurements.append(measurement)
+    print(measurements, flush=True)
     return jsonify(measurement), 201
+
+@app.route('/api/v1/measurements/<string:city_name>', methods=['GET'])
+def get_city_measurements(city_name):
+    city_measurements = []
+    for m in measurements:
+        if m.city == city_name:
+            city_measurements.append(m)
+    return city_measurements
+
+if __name__ == '__main__':
+    app.run(host='localhost', port=5050, debug=True)
