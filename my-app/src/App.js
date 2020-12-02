@@ -43,58 +43,77 @@ function App() {
     fetchCitySelected();
   }, [citySelected]);
 
-  const [userMeasurement, setUserMeasurement] = useState({} );
+  const [userMeasurement, setUserMeasurement] = useState({});
   useEffect(() => {
     const fetchUserMeasurement= async () => {
-      console.log("city chosen" + citySelected);
-      if(citySelected != ""){
-        const result = await axios('https://api.openaq.org/v1/measurements?country=US&city=' + citySelected);
-        console.log(result.data.results);
-        setMeasurements(result.data.results);
-      }
-      
-    };
-
-    fetchUserMeasurement();
-  }, [userMeasurement]);
-
-  async function submitUserMeasurement(event) {
-    const city = event.target[0].value;
-    const coordinates = event.target[1].value;
-    const country = event.target[2].value;
-    const date = event.target[3].value;
-    const location = event.target[4].value;
-    const parameter = event.target[5].value;
-    const unit = event.target[6].value;
-    const value = event.target[7].value;
-
-    const measurement = {
-      "city": city,
-      "coordinates": coordinates,
-      "country": country,
-      "date": date,
-      "location": location,
-      "parameter": parameter,
-      "unit": unit,
-      "value": value
-    }
-
-    console.log("Measurement Entered: " + JSON.stringify(measurement));
-    var result;
-    try{
-        result = await axios({
+      console.log("new measurement" + JSON.stringify(userMeasurement));
+      const result = await axios({
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         url: 'http://localhost:5050/api/v1/measurements',
-        data : JSON.stringify(measurement)
+        data : JSON.stringify(userMeasurement)
       });
       console.log(result.data);
-    } finally {
-      setUserMeasurement(result.data);
-      console.log("result" + result);
-    }
+    };
+
+    fetchUserMeasurement();
+  }, [userMeasurement]);
+
+  // async function submitUserMeasurement(event) {
+  //   const city = event.target[0].value;
+  //   const coordinates = event.target[1].value;
+  //   const country = event.target[2].value;
+  //   const date = event.target[3].value;
+  //   const location = event.target[4].value;
+  //   const parameter = event.target[5].value;
+  //   const unit = event.target[6].value;
+  //   const value = event.target[7].value;
+
+  //   const measurement = {
+  //     "city": city,
+  //     "coordinates": coordinates,
+  //     "country": country,
+  //     "date": date,
+  //     "location": location,
+  //     "parameter": parameter,
+  //     "unit": unit,
+  //     "value": value
+  //   }
+
+  //   console.log("Measurement Entered: " + JSON.stringify(measurement));
+  //   var result;
+  //   try{
+  //       result = await axios({
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json'
+  //       },
+  //       url: 'http://localhost:5050/api/v1/measurements',
+  //       data : JSON.stringify(measurement)
+  //     });
+  //     console.log(result.data);
+  //   } finally {
+  //     setUserMeasurement(result.data);
+  //     console.log("result" + result);
+  //   }
+  // }
+
+  function submitUserMeasurement(event) {
+    event.preventDefault();
+    setUserMeasurement(
+      {
+        "city" : event.target[0].value,
+        "coordinates" : event.target[1].value,
+        "country" : event.target[2].value,
+        "date" : event.target[3].value,
+        "location" : event.target[4].value,
+        "parameter" : event.target[5].value,
+        "unit" : event.target[6].value,
+        "value" : event.target[7].value
+      }
+    )
   }
 
   return (
@@ -116,7 +135,7 @@ function App() {
         <form onSubmit={submitUserMeasurement}>
           <div>
             <label for="cityM">Enter a city: </label>
-            <input type="text" id="cityM" name="cityM" value={userMeasurement.city}></input>
+            <input type="text" id="cityM" name="cityM"></input>
           </div>
           <div>
             <label for="coordinatesM">Enter a coordinates: </label>
