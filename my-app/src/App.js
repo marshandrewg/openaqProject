@@ -27,6 +27,10 @@ function App() {
     fetchData();
   }, []);
   
+  /**
+   * Creates an effect to update the city selected
+   * and fetch the measurements
+   */
   const [citySelected, setCitySelected] = useState("");
   const [measurements, setMeasurements] = useState([]);
   useEffect(() => {
@@ -34,8 +38,11 @@ function App() {
       console.log("city chosen" + citySelected);
       if(citySelected != ""){
         const result = await axios('https://api.openaq.org/v1/measurements?country=US&city=' + citySelected);
-        console.log(result.data.results);
-        setMeasurements(result.data.results);
+        const result2 = await axios('http://localhost:5050/api/v1/measurements/' + citySelected);
+
+        var totalResults = result.data.results
+        totalResults = totalResults.concat(result2.data);
+        setMeasurements(totalResults);
       }
       
     };
@@ -43,6 +50,10 @@ function App() {
     fetchCitySelected();
   }, [citySelected]);
 
+  /**
+   * Sends a PUT request after user enters city information
+   * and adds the resulting call back to the list of measurements
+   */
   const [userMeasurement, setUserMeasurement] = useState({});
   useEffect(() => {
     const fetchUserMeasurement= async () => {
@@ -55,51 +66,21 @@ function App() {
         url: 'http://localhost:5050/api/v1/measurements',
         data : JSON.stringify(userMeasurement)
       });
-      console.log(result.data);
+      console.log("Fetching user stuff" + (JSON.stringify(result.data)));
+      if(result.data.city === citySelected){
+        measurements.push(result.data);
+      }
+      
+      console.log(measurements);
     };
 
     fetchUserMeasurement();
   }, [userMeasurement]);
 
-  // async function submitUserMeasurement(event) {
-  //   const city = event.target[0].value;
-  //   const coordinates = event.target[1].value;
-  //   const country = event.target[2].value;
-  //   const date = event.target[3].value;
-  //   const location = event.target[4].value;
-  //   const parameter = event.target[5].value;
-  //   const unit = event.target[6].value;
-  //   const value = event.target[7].value;
-
-  //   const measurement = {
-  //     "city": city,
-  //     "coordinates": coordinates,
-  //     "country": country,
-  //     "date": date,
-  //     "location": location,
-  //     "parameter": parameter,
-  //     "unit": unit,
-  //     "value": value
-  //   }
-
-  //   console.log("Measurement Entered: " + JSON.stringify(measurement));
-  //   var result;
-  //   try{
-  //       result = await axios({
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json'
-  //       },
-  //       url: 'http://localhost:5050/api/v1/measurements',
-  //       data : JSON.stringify(measurement)
-  //     });
-  //     console.log(result.data);
-  //   } finally {
-  //     setUserMeasurement(result.data);
-  //     console.log("result" + result);
-  //   }
-  // }
-
+  /**
+   * Translates text fields into dict for uploading measurements.
+   * @param {*} event Submit button event
+   */
   function submitUserMeasurement(event) {
     event.preventDefault();
     setUserMeasurement(
@@ -187,23 +168,12 @@ function App() {
                   <th>{measurement.parameter}</th>
                   <th>{measurement.unit}</th>
                   <th>{measurement.value}</th>
-                  <th>{measurement.date.local}</th>
+                  <th>{JSON.stringify(measurement.date)}</th>
                 </tr>
               ))}
           </table>
 
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+        
       </header>
     </div>
   );

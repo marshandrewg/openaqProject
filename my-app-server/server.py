@@ -40,10 +40,12 @@ def add_measurement():
 @app.route('/api/v1/measurements/<string:city_name>', methods=['GET'])
 def get_city_measurements(city_name):
     city_measurements = []
+    print("Got into city_measurements", flush=True)
     for m in measurements:
-        if m.city == city_name:
+        if m['city'] == city_name:
+            print("Found city" + city_name,flush=True)
             city_measurements.append(m)
-    return city_measurements
+    return jsonify(city_measurements), 201
 
 if __name__ == '__main__':
     app.run(host='localhost', port=5050, debug=True)
