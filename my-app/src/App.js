@@ -1,8 +1,20 @@
 import React, { Fragment, useState, useEffect } from 'react';
 import axios from 'axios';
+import Container from 'react-bootstrap/Container';
+import Badge from 'react-bootstrap/Badge';
+import Row from 'react-bootstrap/Row';
+import Col from 'react-bootstrap/Col'
 import { useForm } from "react-hook-form";
 import logo from './logo.svg';
-import './App.css';
+// import './App.css';
+import MeasurementForm from './MeasurementForm';
+import SelectCityForm from './SelectCityForm';
+import ExampleNavBar from './ExampleNavBar';
+import ExampleToast from './ExampleToast';
+
+
+import 'bootstrap/dist/css/bootstrap.min.css';
+import MeasurementTable from './MeasurementTable';
 
 function App() {
   const [data, setData] = useState( ["loading"] );
@@ -19,7 +31,7 @@ function App() {
       // USE BELOW FOR PRESENTATION
       // const result = await axios('https://api.openaq.org/v1/cities?country=US&limit=1000');
       setData(result.data.results);
-      // setCitySelected(result.data.results[0].name)
+      setCitySelected(result.data.results[0].name)
       console.log(citySelected);
       console.log("first city" + result.data.results[0].name);
     };
@@ -36,14 +48,19 @@ function App() {
   useEffect(() => {
     const fetchCitySelected = async () => {
       console.log("city chosen" + citySelected);
-      if(citySelected != ""){
-        const result = await axios('https://api.openaq.org/v1/measurements?country=US&city=' + citySelected);
-        const result2 = await axios('http://localhost:5050/api/v1/measurements/' + citySelected);
+      var result = await axios('https://api.openaq.org/v1/measurements?country=US&city=' + citySelected);
+      console.log(result);
+      // var result2 = await axios('http://localhost:5050/api/v1/measurements/' + citySelected);
 
-        var totalResults = result.data.results
-        totalResults = totalResults.concat(result2.data);
-        setMeasurements(totalResults);
-      }
+      // var totalResults = result.data.results
+      // totalResults = totalResults.concat(result2.data);
+      setMeasurements(result.data.results);
+      console.log(measurements);
+      // console.log("Total Results");
+      // console.log(totalResults);
+      // if(citySelected){
+        
+      // }
       
     };
 
@@ -82,7 +99,14 @@ function App() {
    * @param {*} event Submit button event
    */
   function submitUserMeasurement(event) {
-    event.preventDefault();
+    console.log("event");
+    console.log(event);
+    const form = event.currentTarget;
+    if (form.checkValidity() === false) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    // event.preventDefault();
     setUserMeasurement(
       {
         "city" : event.target[0].value,
@@ -95,83 +119,64 @@ function App() {
         "value" : event.target[7].value
       }
     )
+    console.log(userMeasurement);
   }
 
   return (
     
     <div className="App">
       <header className="App-header">
-      <label form="cities">Choose a city: </label>
-        <select name="cities" id="cities" value={citySelected} onChange={event => setCitySelected(event.target.value)}>
-          {data.map(city => (
-            <option value={city.name}>{city.name}</option>
-          ))}
-        </select>
-        <p>
-          
-        </p>
-        <p>
-          Input a new measurement:
-        </p>
-        <form onSubmit={submitUserMeasurement}>
-          <div>
-            <label for="cityM">Enter a city: </label>
-            <input type="text" id="cityM" name="cityM"></input>
-          </div>
-          <div>
-            <label for="coordinatesM">Enter a coordinates: </label>
-            <input type="text" id="coordinatesM" name="coordinatesM"></input>
-          </div>
-          <div>
-            <label for="countryM">Enter a country: </label>
-            <input type="text" id="countryM" name="countryM"></input>
-          </div>
-          <div>
-            <label for="dateM">Enter a date: </label>
-            <input type="text" id="dateM" name="dateM"></input>
-          </div>
-          <div>
-            <label for="locationM">Enter a location: </label>
-            <input type="text" id="locationM" name="locationM"></input>
-          </div>
-          <div>
-            <label for="parameterM">Enter a parameter: </label>
-            <input type="text" id="parameterM" name="parameterM"></input>
-          </div>
-          <div>
-            <label for="unitM">Enter a unit: </label>
-            <input type="text" id="unitM" name="unitM"></input>
-          </div>
-          <div>
-            <label for="valueM">Enter a value: </label>
-            <input type="text" id="valueM" name="valueM"></input>
-          </div>
-          <div>
-            <input type="submit" value="submit" />
-          </div>
-        </form>
-        <label form="measurements">Measurements Below</label>
-            {/* {Object.entries(measurements).map(([key, value]) => 
-            <p> {JSON.stringify(key)} + " " + {JSON.stringify(value)})</p>)} */}
-            <table>
-              <colgroup span="5"></colgroup>
-              <tr>
-                <th>Location</th>
-                <th>Parameter</th>
-                <th>Unit</th>
-                <th>Value</th>
-                <th>Date</th>
-              </tr>
+      <Container className="mt-5">
+        <h1 className="header">OpenAQ App <Badge variant="secondary">Now running with React-Bootstrap!</Badge></h1>
+      </Container>
+
+      <Container className="p-3">
+      <ExampleToast className="p-4">
+          <span role="img" aria-label="tada">
+            🎉
+          </span>
+           This app allows you to select a city and view air quality measurements from
+          a public api hosted at openaq.org. To begin, click on the select button below and choose a city!  
+          <span role="img" aria-label="tada">
+            🎉
+          </span>
+        </ExampleToast>
+      </Container>
+
+      <Container className="p-3">
+      <Row>
+      <Col>
+      <SelectCityForm
+        options=
+        {data.map(city => (
+          <option value={city.name}>{city.name}</option>
+        ))}
+        handleChange = {event => setCitySelected(event.target.value)}
+      >
+      </SelectCityForm>
+      <MeasurementTable
+            rows = 
               {measurements.map(measurement => (
                 <tr>
-                  <th>{measurement.location}</th>
-                  <th>{measurement.parameter}</th>
-                  <th>{measurement.unit}</th>
-                  <th>{measurement.value}</th>
-                  <th>{JSON.stringify(measurement.date)}</th>
+                  <td>{measurement.location}</td>
+                  <td>{measurement.parameter}</td>
+                  <td>{measurement.unit}</td>
+                  <td>{measurement.value}</td>
+                  <td>{(Date(measurement.date))}</td>
                 </tr>
               ))}
-          </table>
+          >
+          </MeasurementTable>
+      </Col>
+      
+      <Col>
+      <MeasurementForm
+        handleSubmit= {event => submitUserMeasurement(event)}
+      >
+      </MeasurementForm>
+      </Col>
+      </Row>
+        </Container>
 
         
       </header>
