@@ -1,0 +1,26 @@
+{
+  "files": {
+    "main.css": "/openaqProject/static/css/main.6dea0f05.chunk.css",
+    "main.js": "/openaqProject/static/js/main.ebbb0248.chunk.js",
+    "main.js.map": "/openaqProject/static/js/main.ebbb0248.chunk.js.map",
+    "runtime-main.js": "/openaqProject/static/js/runtime-main.54326995.js",
+    "runtime-main.js.map": "/openaqProject/static/js/runtime-main.54326995.js.map",
+    "static/css/2.31ff0196.chunk.css": "/openaqProject/static/css/2.31ff0196.chunk.css",
+    "static/js/2.78a93efd.chunk.js": "/openaqProject/static/js/2.78a93efd.chunk.js",
+    "static/js/2.78a93efd.chunk.js.map": "/openaqProject/static/js/2.78a93efd.chunk.js.map",
+    "static/js/3.a78aa07a.chunk.js": "/openaqProject/static/js/3.a78aa07a.chunk.js",
+    "static/js/3.a78aa07a.chunk.js.map": "/openaqProject/static/js/3.a78aa07a.chunk.js.map",
+    "index.html": "/openaqProject/index.html",
+    "static/css/2.31ff0196.chunk.css.map": "/openaqProject/static/css/2.31ff0196.chunk.css.map",
+    "static/css/main.6dea0f05.chunk.css.map": "/openaqProject/static/css/main.6dea0f05.chunk.css.map",
+    "static/js/2.78a93efd.chunk.js.LICENSE.txt": "/openaqProject/static/js/2.78a93efd.chunk.js.LICENSE.txt",
+    "static/media/logo.6ce24c58.svg": "/openaqProject/static/media/logo.6ce24c58.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.54326995.js",
+    "static/css/2.31ff0196.chunk.css",
+    "static/js/2.78a93efd.chunk.js",
+    "static/css/main.6dea0f05.chunk.css",
+    "static/js/main.ebbb0248.chunk.js"
+  ]
+}
